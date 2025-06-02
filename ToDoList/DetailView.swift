@@ -9,29 +9,55 @@ import SwiftUI
 
 struct DetailView: View {
     @Environment(\.dismiss) private var dismiss
-    var passedValue: String
+    @State var todo: String
+    @State private var reminderIsOn = false
+    @State private var completed = false
+    @State private var dueDate = Calendar.current.date(byAdding: .day, value: 100,  to: Date.now)!
+    @State private var notes = ""
     
     var body: some View {
-        VStack {
-            Image(systemName: "swift")
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(.orange)
+        List {
+            TextField("Enter a todo here", text: $todo)
+                .font(.title)
+                .textFieldStyle(.roundedBorder)
+                .padding(.vertical)
+                .listRowSeparator(.hidden)
             
-            Text("You Are a Swifty Legend!\nAnd you passed over the value \(passedValue)")
-                .font(.largeTitle)
-                .multilineTextAlignment(.center)
+            Toggle("Set Reminder", isOn: $reminderIsOn)
+                .padding(.top)
+                .listRowSeparator(.hidden)
             
-            Spacer()
+            DatePicker("Date", selection: $dueDate)
+                .padding(.bottom)
+                .listRowSeparator(.hidden)
+                .disabled(!reminderIsOn)
             
-            Button("Get back") {
-                dismiss()
+            Text("Notes: ")
+                .padding(.top)
+                .listRowSeparator(.hidden)
+            
+            TextField("Notes", text: $notes, axis: .vertical)
+                .textFieldStyle(.roundedBorder)
+                .listRowSeparator(.hidden)
+            
+            Toggle("Completed", isOn: $completed)
+                .padding(.top)
+                .listRowSeparator(.hidden)
+        }
+        .navigationBarBackButtonHidden()
+        .listStyle(.plain)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button("Cancel") {
+                    dismiss()
+                }
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Save") {
+                    // TODO: - Add saved details
+                }
             }
         }
-        .padding()
     }
-}
-
-#Preview {
-    DetailView(passedValue: "1")
 }
