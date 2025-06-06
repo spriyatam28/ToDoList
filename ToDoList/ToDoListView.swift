@@ -6,23 +6,21 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ToDoListView: View {
-    var todos: [String] = [
-        "Learn Swift",
-        "Build Apps",
-        "Earn Money"
-    ]
+    @Query var todos: [TodoModel]
     @State private var isSheetPresented: Bool = false
+    @Environment(\.modelContext) var modelContext
     
     var body: some View {
         NavigationStack {
             List {
-                ForEach(todos, id: \.self) { todo in
+                ForEach(todos) { todo in
                     NavigationLink {
                         DetailView(todo: todo)
                     } label: {
-                        Text(todo)
+                        Text(todo.item)
                     }
                     .font(.title2)
                 }
@@ -32,7 +30,7 @@ struct ToDoListView: View {
             .listStyle(.plain)
             .sheet(isPresented: $isSheetPresented) {
                 NavigationStack {
-                    DetailView(todo: "")
+                    DetailView(todo: TodoModel())
                 }
             }
             .toolbar {
