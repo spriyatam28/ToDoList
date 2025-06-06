@@ -17,12 +17,26 @@ struct ToDoListView: View {
         NavigationStack {
             List {
                 ForEach(todos) { todo in
-                    NavigationLink {
-                        DetailView(todo: todo)
-                    } label: {
-                        Text(todo.item)
+                    HStack {
+                        Image(systemName: todo.completed ? "checkmark.rectangle" : "rectangle")
+                            .onTapGesture {
+                                todo.completed.toggle()
+                                guard let _ = try? modelContext.save() else { return }
+                            }
+                        
+                        NavigationLink {
+                            DetailView(todo: todo)
+                        } label: {
+                            Text(todo.item)
+                        }
                     }
                     .font(.title2)
+                }
+                .onDelete { indexSet in
+                    indexSet.forEach {
+                        modelContext.delete(todos[$0])
+                        guard let _ = try? modelContext.save() else { return }
+                    }
                 }
             }
             .navigationTitle("To Do List")
